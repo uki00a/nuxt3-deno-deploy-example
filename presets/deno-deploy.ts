@@ -8,6 +8,11 @@ const denoDeployPreset: NitroPreset = {
   commands: {
     preview: "deno run --A {{ output.serverDir }}/index.mjs",
   },
+  esbuild: {
+    options: {
+      target: "esnext",
+    },
+  },
 };
 
 export default denoDeployPreset;

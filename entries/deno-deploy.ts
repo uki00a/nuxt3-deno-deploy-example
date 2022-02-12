@@ -36,18 +36,29 @@
 
 // @ts-expect-error
 import { serve } from "https://deno.land/std@0.125.0/http/server.ts";
+// @ts-expect-error
+import { serveFile } from "https://deno.land/std@0.125.0/http/file_server.ts";
 import { localCall } from "@nuxt/nitro/dist/runtime/server/index.mjs";
 import {
   requestHasBody,
   useRequestBody,
 } from "@nuxt/nitro/dist/runtime/server/utils.mjs";
+import { buildAssetsDir } from "#paths";
 
 serve(async (req: Request) => {
+  const url = new URL(req.url);
+  if (url.pathname.startsWith(buildAssetsDir())) {
+    // This code will eventually be written to the `.output/server/chunks` directory.
+    // On the other hand, build assets will be written to `.output/public/${buildAssetsDir()}` directory.
+    // Therefore, we need to refer to `/public` directory two directories up from here.
+    const assetURL = new URL(`../../public${url.pathname}`, import.meta.url);
+    return serveFile(req, assetURL.pathname);
+  }
+
   let body: any;
   if (requestHasBody(req)) {
     body = await useRequestBody(req);
   }
-  const url = new URL(req.url);
   const ctx = {
     url: url.pathname + url.search,
     host: url.hostname,
@@ -59,8 +70,6 @@ serve(async (req: Request) => {
   };
   const r = await localCall(ctx);
 
-  console.log(ctx)
-  console.log([req.url, r])
   return new Response(r.body, {
     headers: r.headers,
     status: r.status,
@@ -72,3 +81,5 @@ const isLocal = Deno.env.get("DENO_DEPLOYMENT_ID") == null;
 if (isLocal) {
   console.log("Listening on http://localhost:8000");
 }
+
+export default {};
