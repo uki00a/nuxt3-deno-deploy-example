@@ -29,4 +29,4 @@ jobs:
           project: "nuxt3-example"
           root: ".output"
           cwd: ".output"
-          entrypoint: ".output/server/index.mjs"
+          entrypoint: "server/index.mjs"
