@@ -1,0 +1,31 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: read # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - uses: bahmutov/npm-install@v1
+      - name: Build
+        run: |
+          yarn build
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@main
+        with:
+          project: "nuxt3-example"
+          root: ".output"
+          entrypoint: ".output/server/index.mjs"
