@@ -35,9 +35,9 @@
  */
 
 // @ts-expect-error
-import { serve } from "https://deno.land/std@0.125.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.126.0/http/server.ts";
 // @ts-expect-error
-import { serveFile } from "https://deno.land/std@0.125.0/http/file_server.ts";
+import { serveFile } from "https://deno.land/std@0.126.0/http/file_server.ts";
 import { localCall } from "@nuxt/nitro/dist/runtime/server/index.mjs";
 import {
   requestHasBody,
